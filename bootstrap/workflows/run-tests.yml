@@ -1,0 +1,76 @@
+name: Run tests
+
+on: push
+
+jobs:
+  run-tests:
+    name: Run tests P${{ matrix.php }}
+    runs-on: ubuntu-latest
+    env:
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        php: [ 8.1 ]
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_DATABASE: haydens_garage
+          MYSQL_ROOT_PASSWORD: secret
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 --name=mysql
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Change MariaDB SQL Mode
+        run: docker exec mysql mysql -uroot -psecret -e "SET GLOBAL innodb_strict_mode = OFF;"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, redis, xmlrpc
+          coverage: none
+          ini-values: max_input_vars=50000, max_execution_time=300
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Copy example .env
+        run: cp .env.example .env
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+
+      - name: Run yarn
+        run: yarn && yarn build
+
+      - name: Generate Laravel key
+        run: php artisan key:generate
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: Logs
+          path: ./storage/logs
