@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Slot;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class SlotSeeder extends Seeder
 {
