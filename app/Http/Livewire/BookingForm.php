@@ -19,7 +19,7 @@ class BookingForm extends Component
     public string $phone_number = '';
     public string $vehicle_make = '';
     public string $vehicle_model = '';
-    public string $date = '';
+    public ?string $date = null;
     public ?Collection $slots = null;
     public ?int $slot_id = null;
 
@@ -45,7 +45,7 @@ class BookingForm extends Component
         ])->layout('layouts.guest');
     }
 
-    public function submit()
+    public function submit(): void
     {
         $data = $this->validate();
 
@@ -57,7 +57,7 @@ class BookingForm extends Component
         Mail::to($booking->email)->send(new UserBookingNotification($booking));
 
         // A proper auth setup needs to be done to determine the admin. For now, I simply added is_admin boolean column
-        $admin = User::where('is_admin', true)->first();
+        $admin = User::admin()->first();
         if ($admin) {
             Mail::to($admin)->send(new AdminBookingNotification($booking));
         }
