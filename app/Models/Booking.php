@@ -18,7 +18,7 @@ class Booking extends Model
         'vehicle_model',
         'date',
         'slot_id',
-        'status',
+        'completed',
     ];
 
     protected $casts = [

@@ -43,12 +43,12 @@
                         </select>
                         @if ($date)
                             @if ($slots->isEmpty())
-                                <p class="mt-2 text-sm text-red-500 dark:text-red-400">No available slot</p>
+                                <span class="mt-2 text-sm text-red-500 dark:text-red-400">No available slot</span>
                             @else
-                                <p class="mt-2 text-sm text-green-500 dark:text-green-400">Select a slot</p>
+                                <span class="mt-2 text-sm text-green-500 dark:text-green-400">Select a slot</span>
                             @endif
                         @else
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Select date to see slots</p>
+                            <span class="mt-2 text-sm text-gray-500 dark:text-gray-400">Select date to see slots</span>
                         @endif
                     </div>
                 </div>
@@ -59,6 +59,11 @@
                     </x-button>
                 </div>
             </form>
+            @if (($user = auth()->user()) && $user->is_admin)
+                <div class="mt-1 mb-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center"><a href="{{ route('dashboard') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Admin dashboard</a></p>
+                </div>
+            @endif
         </div>
     </div>
 </div>
