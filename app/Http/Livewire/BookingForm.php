@@ -37,7 +37,7 @@ class BookingForm extends Component
         $this->slots = $this->date ? Slot::getAvailableSlots($this->date) : null;
 
         return view('livewire.booking-form', [
-            'slots' => $this->slots
+            'slots' => $this->slots,
         ])->layout('layouts.guest');
     }
 
