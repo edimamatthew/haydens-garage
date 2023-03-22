@@ -8,6 +8,10 @@ class BlockedSlot extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function slot()
     {
         return $this->belongsTo(Slot::class);

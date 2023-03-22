@@ -16,6 +16,10 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    <x-nav-link href="{{ route('blocked-slots.index') }}" :active="request()->routeIs('blocked-slots*')">
+                        {{ __('Blocked slots') }}
+                    </x-nav-link>
+
                     <x-nav-link href="{{ route('home') }}">
                         {{ __('Booking form') }}
                     </x-nav-link>
