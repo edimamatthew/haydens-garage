@@ -2,9 +2,13 @@
 
 namespace App\Http\Livewire;
 
+use App\Mail\AdminBookingNotification;
+use App\Mail\UserBookingNotification;
 use App\Models\Booking;
 use App\Models\Slot;
+use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -45,9 +49,18 @@ class BookingForm extends Component
     {
         $data = $this->validate();
 
-        Booking::create($data);
+        $booking = Booking::create($data);
 
-        // Send emails to the user and the admin
+        // Possibly extend it by adding the booking to the user and admin's calendar?
+
+        // Send notification to the user
+        Mail::to($booking->email)->send(new UserBookingNotification($booking));
+
+        // A proper auth setup needs to be done to determine the admin. For now, I simply added is_admin boolean column
+        $admin = User::where('is_admin', true)->first();
+        if ($admin) {
+            Mail::to($admin)->send(new AdminBookingNotification($booking));
+        }
 
         session()->flash('success', 'Your booking has been submitted successfully!');
 
