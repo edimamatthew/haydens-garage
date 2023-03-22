@@ -7,6 +7,7 @@ use App\Mail\UserBookingNotification;
 use App\Models\Booking;
 use App\Models\Slot;
 use App\Models\User;
+use App\Rules\EnsureWeekdayBooking;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,7 @@ class BookingForm extends Component
             'phone_number' => ['required', 'string'],
             'vehicle_make' => ['required', 'string'],
             'vehicle_model' => ['required', 'string'],
-            'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:today'],
+            'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:today', new EnsureWeekdayBooking],
             'slot_id' => ['required', Rule::in(Slot::getAvailableSlots($this->date)->pluck('id')->toArray())],
         ];
     }
