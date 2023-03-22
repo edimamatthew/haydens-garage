@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\BookingForm;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', BookingForm::class);
 
 Route::middleware([
     'auth:sanctum',
