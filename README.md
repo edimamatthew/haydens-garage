@@ -37,5 +37,6 @@ You should be able to access the app on http://localhost
 
 To register, navigate to http://localhost/register and use http://localhost/login to sign in
 
-### Issue
-I used Laravel's default authentication (via Jetstream) and didn't setup for email verification, admin privileges, etc. So for now, anybody signed in has access to the dashboard
+### Issues
+- I used Laravel's default authentication (via Jetstream) and didn't setup for email verification, admin privileges, etc. So for now, anybody signed in has access to the dashboard
+- Also, Jetstream scaffolding came with some view files that needs to be cleaned up
